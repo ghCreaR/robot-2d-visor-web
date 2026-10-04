@@ -39,8 +39,8 @@ El contenedor sirve los ficheros en el puerto `8080` (publicado en el `8081` en 
 ## Documentación relacionada
 
 - [Visor web](https://github.com/ojgarciab/carrera-robots-autonomos#visor-web) y [CORS y orígenes permitidos](https://github.com/ojgarciab/carrera-robots-autonomos#cors-y-orígenes-permitidos)
-- [Capas SVG de los robots](https://github.com/ojgarciab/carrera-robots-autonomos/blob/main/robots/README.md#capas-svg)
-- [Contrato de la API de cliente](https://github.com/ojgarciab/carrera-robots-autonomos/blob/main/contratos/api-cliente.md)
+- [Capas SVG de los robots](https://github.com/ojgarciab/carrera-robots-autonomos/blob/master/robots/README.md#capas-svg)
+- [Contrato de la API de cliente](https://github.com/ojgarciab/carrera-robots-autonomos/blob/master/contratos/api-cliente.md)
 - [Plan de implementación](Plan.md)
 
 ## Licencia
