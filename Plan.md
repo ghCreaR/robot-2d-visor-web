@@ -37,6 +37,7 @@ robot-2d-visor-web/
 │       ├── token.js          # guardar y leer el token (sessionStorage)
 │       ├── robots.js         # definición de robot y capas SVG
 │       ├── circuito.js       # dibujo del circuito
+│       ├── panel-sensores.js # sensores de un robot: silueta, tabla, gráfica y métricas
 │       ├── vista-usuario.js
 │       └── vista-admin.js
 ├── tests/
@@ -49,7 +50,7 @@ robot-2d-visor-web/
 
 1. La persona pega su **token de solo lectura**. Se guarda en `sessionStorage`, que se borra al cerrar la pestaña, y **nunca en la URL**.
 2. Con `GET /yo` se comprueba el token y se averigua si su dueño es administrador.
-3. Con `GET /mundos` se elige el mundo; se marcan los inactivos.
+3. Con `GET /mundos` se elige el mundo; se marcan los inactivos. Se muestra **un mundo cada vez**: al cambiar de mundo se cancelan las suscripciones del anterior (`dejar`).
 4. Se elige la vista: la de administrador solo aparece si el usuario lo es.
 
 Si llega un token de lectura-escritura, el visor avisa de que **no conviene usarlo** aquí, porque el visor no lo necesita y quedaría expuesto en el navegador. Funcionaría igual, pero se recomienda el de solo lectura.
@@ -62,6 +63,9 @@ Si llega un token de lectura-escritura, el visor avisa de que **no conviene usar
 - Si el token se rechaza (caducado o revocado), vuelve a la pantalla de acceso con un mensaje claro.
 
 ### 3.3. Vista de usuario
+
+La muestra el componente `panel-sensores.js`, que también usa la vista de administrador para ver los sensores de cualquier robot.
+
 
 - Carga la definición del robot (`GET /robots/<id>`) para saber qué sensores tiene y dónde están.
 - **Dibujo de los sensores** con sus posiciones reales sobre la silueta del robot (capas SVG), con una intensidad proporcional a su valor. Con los sensores digitales actuales se ven encendidos (`1`) o apagados (`0`); con el sensor promediado previsto se verán en escala de grises sin cambiar el código. Así se ve lo mismo que "ve" el robot.
@@ -77,6 +81,7 @@ Si llega un token de lectura-escritura, el visor avisa de que **no conviene usar
 - **Etiqueta con el nombre visible** del usuario sobre cada robot, sin girar con él.
 - **Interpolación** entre dos estados (llegan a 30 Hz) para que el movimiento sea suave en pantallas a 60 Hz o más.
 - **Modo pantalla completa** pensado para proyectar: sin controles visibles, con el nombre del mundo y el número de robots.
+- **Sensores de cualquier robot:** al pulsar sobre un robot (o elegirlo en la lista de robots del mundo) se abre un panel lateral con sus sensores. Usa `seguir` con el `usuario` de ese robot y el mismo componente `panel-sensores.js` que la vista de usuario. Al elegir otro robot se cancela el anterior con `dejar`. El robot seleccionado se resalta en el circuito. En pantalla completa el panel se oculta.
 - Los robots que entran o salen aparecen o desaparecen con una transición breve.
 
 ## 4. Despliegue
@@ -107,6 +112,7 @@ Si llega un token de lectura-escritura, el visor avisa de que **no conviene usar
 
 ### Fase 4 · Vista de administrador
 - Circuito, robots con capas SVG, etiquetas, interpolación y pantalla completa.
+- Selección de un robot y panel con sus sensores (`seguir` con `usuario`).
 - Prueba visual con Playwright contra el servidor falso (captura de pantalla de referencia).
 
 ### Fase 5 · Integración
@@ -124,8 +130,9 @@ Si llega un token de lectura-escritura, el visor avisa de que **no conviene usar
 
 - **Sensores IR:** digitales para empezar; el visor pinta la intensidad del valor, así que el sensor promediado futuro no necesita cambios.
 - **Circuitos:** se obtienen de la pasarela (`GET /circuitos/<id>`), que los carga del repositorio común.
+- **Administradores:** pueden ver los sensores de cualquier robot desde la vista de administrador.
+- **Un mundo cada vez:** no hay vista de varios mundos en paralelo.
 
 ## 8. Preguntas abiertas
 
-1. **Selección de robot en la vista de usuario:** con un token de solo lectura se ve el robot del dueño del token. ¿Hace falta que un administrador pueda ver los sensores de cualquier robot desde la vista de administrador (por ejemplo, al pulsar sobre él)? Habría que añadirlo al contrato de la API.
-2. **Varias vistas a la vez:** ¿interesa una vista que muestre los sensores de varios mundos del mismo usuario en paralelo?
+Ninguna por ahora.

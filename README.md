@@ -20,9 +20,11 @@ Es de **solo lectura**: no puede controlar ningún robot. Se autentica con un **
 | Vista | Qué muestra | Quién | Uso típico |
 |-------|-------------|-------|------------|
 | **Usuario** | **Solo los valores de los sensores** de un robot, con su marca de tiempo, el intervalo entre muestras y la latencia estimada. No muestra la posición real ni a los demás robots. | Cualquier token de solo lectura. | Que el dueño depure su algoritmo viendo lo mismo que "ve" su robot, o que otras personas lo sigan. |
-| **Administrador** | El circuito y **todos** los robots con su **posición y orientación exactas**, dibujados con sus capas SVG y con el **nombre de su usuario** encima. | Solo usuarios con rol de administrador. | Proyectar la carrera en pantallas grandes. |
+| **Administrador** | El circuito y **todos** los robots con su **posición y orientación exactas**, dibujados con sus capas SVG y con el **nombre de su usuario** encima. Al seleccionar un robot, muestra también **sus sensores**. | Solo usuarios con rol de administrador. | Proyectar la carrera en pantallas grandes y revisar cualquier robot. |
 
 Así un participante solo dispone de la información que dan los sensores de su robot, mientras que el administrador tiene la vista completa.
+
+El visor muestra **un mundo cada vez**; para ver otro, se cambia de mundo.
 
 **Robot fuera del mundo.** Si el robot no está en el mundo (su dueño se desconectó hace más de 5 minutos o salió voluntariamente), el visor muestra **"El robot no está actualmente en el mundo"**. No da la conexión por perdida: cuando el robot vuelve a entrar, sigue mostrando sus sensores sin recargar.
 
