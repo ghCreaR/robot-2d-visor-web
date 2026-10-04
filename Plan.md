@@ -2,7 +2,7 @@
 
 Este plan detalla cómo construir el visor web descrito en el [README del repositorio común](https://github.com/ojgarciab/carrera-robots-autonomos). Todavía no hay código: es una propuesta para revisar antes de empezar.
 
-La API y el protocolo WebSocket que usa el visor se proponen en el [`Plan.md` de la pasarela](https://github.com/ghCreaR/robot-2d-pasarela/blob/main/Plan.md#3-contratos-que-hay-que-cerrar-antes-de-programar).
+La API y el protocolo WebSocket que usa el visor están definidos en [`contratos/api-cliente.md`](https://github.com/ojgarciab/carrera-robots-autonomos/blob/main/contratos/api-cliente.md) del repositorio común, y el formato de los circuitos en [`circuitos/README.md`](https://github.com/ojgarciab/carrera-robots-autonomos/blob/main/circuitos/README.md).
 
 ## 1. Decisiones técnicas propuestas
 
@@ -64,7 +64,7 @@ Si llega un token de lectura-escritura, el visor avisa de que **no conviene usar
 ### 3.3. Vista de usuario
 
 - Carga la definición del robot (`GET /robots/<id>`) para saber qué sensores tiene y dónde están.
-- **Dibujo de los sensores** con sus posiciones reales, encendidos o apagados según la última lectura, sobre la silueta del robot (capas SVG). Así se ve lo mismo que "ve" el robot.
+- **Dibujo de los sensores** con sus posiciones reales sobre la silueta del robot (capas SVG), con una intensidad proporcional a su valor. Con los sensores digitales actuales se ven encendidos (`1`) o apagados (`0`); con el sensor promediado previsto se verán en escala de grises sin cambiar el código. Así se ve lo mismo que "ve" el robot.
 - **Tabla de valores** con el último dato de cada sensor.
 - **Gráfica temporal** de los últimos segundos de cada sensor, como un cronograma.
 - **Métricas:** marca de tiempo de la última muestra, intervalo entre muestras (unos 100 ms), muestras perdidas (huecos en `seq`), latencia (`rtt`) y retraso de llegada estimado con el desfase de reloj calculado con `ping`, como explica el README común.
@@ -72,7 +72,7 @@ Si llega un token de lectura-escritura, el visor avisa de que **no conviene usar
 
 ### 3.4. Vista de administrador
 
-- Dibuja el circuito con `GET /circuitos/<id>`: rectas y arcos en un SVG con `viewBox` en milímetros.
+- Dibuja el circuito con `GET /circuitos/<id>`: rectas y arcos en un SVG con `viewBox` del tamaño del mapa (`dimensiones`), en milímetros, y la `y` invertida. Los arcos se pasan a comandos `A` de SVG teniendo en cuenta su sentido (antihorario si `fin > inicio`).
 - Por cada robot del `estado`, un grupo `<g>` con sus capas SVG en orden (cargadas una vez y reutilizadas) y un `transform="translate(x, y) rotate(θ)"`. **La `y` cambia de signo**, igual que en el convenio de las capas, para que el dibujo coincida con el mundo.
 - **Etiqueta con el nombre visible** del usuario sobre cada robot, sin girar con él.
 - **Interpolación** entre dos estados (llegan a 30 Hz) para que el movimiento sea suave en pantallas a 60 Hz o más.
@@ -118,10 +118,14 @@ Si llega un token de lectura-escritura, el visor avisa de que **no conviene usar
 | Depende de | Qué necesita |
 |------------|--------------|
 | `robot-2d-pasarela` | `GET /yo`, `GET /mundos`, `GET /robots/…`, `GET /circuitos/…`, `GET /ping` y el protocolo WebSocket (`autenticar`, `seguir`, `observar` y los mensajes `sensores`, `robot` y `estado`). Hasta que exista, se trabaja con el servidor falso. |
-| Repositorio común | Capas SVG de los robots (ya existen) y formato de los circuitos. |
+| Repositorio común | Contrato de la API, capas SVG de los robots y formato de los circuitos (ya existen). |
 
-## 7. Preguntas abiertas
+## 7. Decisiones tomadas
 
-1. **Selección de robot en la vista de usuario:** con un token de solo lectura se ve el robot del dueño del token. ¿Hace falta que un administrador pueda ver los sensores de cualquier robot desde la vista de administrador (por ejemplo, al pulsar sobre él)?
+- **Sensores IR:** digitales para empezar; el visor pinta la intensidad del valor, así que el sensor promediado futuro no necesita cambios.
+- **Circuitos:** se obtienen de la pasarela (`GET /circuitos/<id>`), que los carga del repositorio común.
+
+## 8. Preguntas abiertas
+
+1. **Selección de robot en la vista de usuario:** con un token de solo lectura se ve el robot del dueño del token. ¿Hace falta que un administrador pueda ver los sensores de cualquier robot desde la vista de administrador (por ejemplo, al pulsar sobre él)? Habría que añadirlo al contrato de la API.
 2. **Varias vistas a la vez:** ¿interesa una vista que muestre los sensores de varios mundos del mismo usuario en paralelo?
-3. **Valor de los sensores IR:** si es analógico, la vista de usuario debe mostrar una escala de grises en lugar de encendido o apagado.
